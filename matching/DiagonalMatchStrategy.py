@@ -2,19 +2,20 @@ from entities.Point import Point
 from matching.MatchStrategy import MatchStrategy
 
 
-class VerticalMatchStrategy(MatchStrategy):
+class DiagonalMatchStrategy(MatchStrategy):
     def canMatch(self, source: Point, destiny: Point) -> bool:
         if not super().canMatch(source, destiny):
             return False
 
-        # Must be in a different row, and the column be the same
-        if source.row == destiny.row or source.col != destiny.col:
+        # The difference between the rows and the columns must be the same
+        if abs(source.row - destiny.row) != abs(source.col - destiny.col):
             return False
 
         # Must have a clear path between them
         rowsToCheck = range(min(source.row, destiny.row) + 1, max(source.row, destiny.row))
-        for row in rowsToCheck:
-            number = self.stage.get(row, source.col)
+        colsToCheck = range(min(source.col, destiny.col) + 1, max(source.col, destiny.col))
+        for idx in range(len(rowsToCheck)):
+            number = self.stage.get(rowsToCheck[idx], colsToCheck[idx])
             if number.isPlayable():
                 return False
 

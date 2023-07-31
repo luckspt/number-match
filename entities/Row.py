@@ -1,6 +1,8 @@
+import tkinter
 from typing import Union, List
 
 from entities.Number import Number
+from entities.Point import Point
 
 
 class Row:
@@ -12,9 +14,11 @@ class Row:
         numberIsPlayable = lambda n: n.isPlayable()
         return list(filter(numberIsPlayable, self.numbers))
 
+    # TODO optimize so it doesn't have to iterate through the whole list
     def getFirstPlayableNumber(self) -> Number:
         return self.getPlayableNumbers()[0]
 
+    # TODO optimize so it doesn't have to iterate through the whole list
     def getLastPlayableNumber(self) -> Number:
         return self.getPlayableNumbers()[-1]
 
@@ -28,8 +32,11 @@ class Row:
         self.numbers[index] = number
 
     @staticmethod
-    def generate(colCount: int, numbersToGenerate: int = None) -> 'Row':
-        if numbersToGenerate is None:
-            numbersToGenerate = colCount
+    def generate(colCount: int, rowIndex: int, numbersToGenerate: Union[int, None, List[Number]] = None) -> 'Row':
+        numbers: List[Number] = []
+        if numbersToGenerate is None or isinstance(numbersToGenerate, int):
+            numbers = [Number.generate(Point(rowIndex, idx)) for idx in range(numbersToGenerate or colCount)]
+        elif isinstance(numbersToGenerate, list):
+            numbers = numbersToGenerate
 
-        return Row([Number.generate() for _ in range(numbersToGenerate)], colCount)
+        return Row(numbers, colCount)
